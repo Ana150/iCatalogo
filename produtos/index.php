@@ -1,10 +1,9 @@
 <?php
-
     require('../database/conexao.php');
 
-    $sql = "SELECT p.*, c.descricao FROM tbl_produto p
+    $sql = "SELECT p.*, c.descricao AS nome_categoria FROM tbl_produto p
             INNER JOIN tbl_categoria c ON
-            p.categoria_id = c.id;";
+            p.categoria_id = c.id";
 
     $resultado = mysqli_query($conexao, $sql);
 
@@ -37,18 +36,23 @@
 
             <!-- BOTÕES DE INSERÇÃO DE PRODUTOS E CATEGORIAS -->
             <!-- CASO O USUÁRIO ESTEJA LOGADO EXIBE OS BOTÕES DE CADASTRO -->
+
+            <?php if (isset($_SESSION["usuarioId"])) {?>
     
                 <header>
                     <button onclick="javascript:window.location.href ='./novo/'">Novo Produto</button>
                     <button onclick="javascript:window.location.href ='../categorias/'">Adicionar Categoria</button>
                 </header>
 
+                <?php } ?>
             <main>
 
                 <!-- LISTAGEM DE PRODUTOS (INICIO) -->
 
                 <?php
                 
+                $produto = mysqli_fetch_array($resultado);
+
                     while ($produto = mysqli_fetch_array($resultado)) {
                         // var_dump($produto);exit;
                         $valor = $produto["valor"];
@@ -76,10 +80,12 @@
 
                 <article class="card-produto">
 
+                <?php if (isset($_SESSION["usuarioId"])) {?>
                     <div class="acoes-produtos">
                     <img onclick="javascript: window.location = './editar/?id=<?= $produto['id'] ?>'" src="../imgs/edit.svg" />
                     <img onclick="deletar(<?= $produto['id'] ?>)" src="../imgs/trash.svg" />
                     </div>
+                    <?php } ?>
     
                 <figure>
                      <img src="fotos/<?php echo $produto["imagem"]?>" />
@@ -101,7 +107,7 @@
                     <span class="descricao"><?php echo $produto["descricao"]?></span>
 
                     <span class="categoria">
-                        <em><?php echo $produto["descricao"]; ?></em>
+                        <em><?php echo $produto["nome_categoria"]; ?></em>
                      </span>
 
                 </article>
